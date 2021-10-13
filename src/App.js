@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
 
 function App() {
+const [isLoading, setIsLoading] =useState(true);
+const [movie, setMovie] = useState(0);
+
+  useEffect(()=> {
+    GetMovies();
+  })
+
+const GetMovies= async () => {
+  const movies = await (await axios.get("https://yts-proxy.now.sh/list_movies.json")).data.data.movies;
+  setMovie(movies);
+  setIsLoading(false);
+  console.log(movie);
+ 
+
+}
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+<div>
+  <div>{isLoading ? " Loading..." : "we are ready"}</div>
+  
     </div>
   );
 }
