@@ -1,31 +1,53 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import axios from 'axios';
+import Movie from './Movie';
+import "../src/App.css";
 
 
-function App() {
-const [isLoading, setIsLoading] =useState(true);
-const [movie, setMovie] = useState(0);
+class App extends React.Component {
 
-  useEffect(()=> {
-    GetMovies();
-  })
+    state = {
+        isLoading: true,
+        movies: []
+    };
 
-const GetMovies= async () => {
-  const movies = await (await axios.get("https://yts-proxy.now.sh/list_movies.json")).data.data.movies;
-  setMovie(movies);
-  setIsLoading(false);
-  console.log(movie);
- 
+    getMovies = async () => {
 
-}
+        const { data: { data: { movies } } } = await axios.get("https://yts-proxy.now.sh/list_movies.json?sort_by=rating");
+        this.setState({ movies, isLoading: false })
+    }
+    componentDidMount() {
+        this.getMovies();
+    }
 
-  return (
-<div>
-  <div>{isLoading ? " Loading..." : "we are ready"}</div>
-  
-    </div>
-  );
+    render() {
+        const { isLoading, movies } = this.state;
+        return (<section className="container">
+            {isLoading ?
+                <div className="loader">
+
+                    <div className="loader__bar"></div>
+                    <span className="loader__text">Loading...</span>
+                </div>
+
+
+                :
+                <div className="movies">
+                    {movies.map(movie => (
+                        <Movie
+                            key={movie.id}
+                            id={movie.id}
+                            year={movie.year}
+                            title={movie.title}
+                            summary={movie.summary}
+                            poster={movie.medium_cover_image}
+                            genres={movie.genres}
+                        />))}
+                </div>
+            }</section>)
+
+    }
 }
 
 export default App;
